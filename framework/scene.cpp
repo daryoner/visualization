@@ -111,7 +111,7 @@ namespace
 		Mesh::draw();
 
 		glBegin( GL_QUADS );
-			glColor3f( 120/255.f, 120/255.f, 120/255.f ); // заливка
+			glColor4f( 120/255.f, 120/255.f, 120/255.f, 1.f ); // заливка
 
 			glVertex2f( -0.8f, -0.8f );
 			glVertex2f( -0.8f, 0.8f );
@@ -122,12 +122,12 @@ namespace
 
 		glLineWidth( 2.f );
 		glBegin( GL_LINE_LOOP );
-		glColor3f(202 / 255.f, 202 / 255.f, 202 / 255.f); // обводка
+			glColor4f(202 / 255.f, 202 / 255.f, 202 / 255.f, 1.f); // обводка
 
-		glVertex2f(-0.8f, -0.8f);
-		glVertex2f(-0.8f, 0.8f);
-		glVertex2f(0.8f, 0.8f);
-		glVertex2f(0.8f, -0.8f);
+			glVertex2f(-0.8f, -0.8f);
+			glVertex2f(-0.8f, 0.8f);
+			glVertex2f(0.8f, 0.8f);
+			glVertex2f(0.8f, -0.8f);
 
 		glEnd();
 	}
