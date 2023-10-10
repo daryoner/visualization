@@ -29,35 +29,6 @@ namespace
 				PostQuitMessage( 0 );
 				break;
 
-			case WM_KEYDOWN:
-				if ( wParam == 'W' || wParam == VK_UP )
-					game::keyPressed( game::KEY_FORWARD );
-				if ( wParam == 'S' || wParam == VK_DOWN )
-					game::keyPressed( game::KEY_BACKWARD );
-				if ( wParam == 'A' || wParam == VK_LEFT )
-					game::keyPressed( game::KEY_LEFT );
-				if ( wParam == 'D' || wParam == VK_RIGHT )
-					game::keyPressed( game::KEY_RIGHT );
-				if ( wParam == VK_ESCAPE )
-					DestroyWindow( windowHandle );
-				break;
-
-			case WM_KEYUP:
-				if ( wParam == 'W' || wParam == VK_UP )
-					game::keyReleased( game::KEY_FORWARD );
-				if ( wParam == 'S' || wParam == VK_DOWN )
-					game::keyReleased( game::KEY_BACKWARD );
-				if ( wParam == 'A' || wParam == VK_LEFT )
-					game::keyReleased( game::KEY_LEFT );
-				if ( wParam == 'D' || wParam == VK_RIGHT )
-					game::keyReleased( game::KEY_RIGHT );
-				if ( wParam == VK_SPACE )
-				{
-					game::deinit();
-					game::init();
-				}
-				break;
-
 			case WM_LBUTTONUP:
 			case WM_RBUTTONUP:
 				game::mouseClicked( ( float )( GET_X_LPARAM( lParam ) ) / WINDOW_WIDTH,
@@ -76,7 +47,7 @@ namespace
 
 		windowClass.cbSize = sizeof( windowClass ); // размер объекта в байтах, нужен для того, чтобы в любой версии windows все было класна 
 		windowClass.hInstance = GetModuleHandle( nullptr ); // запускающийся файл хэндлит (обрабатвает) сам себя
-		windowClass.lpszClassName = "WoTS_WndClass"; // имя класса окна, нужно системе
+		windowClass.lpszClassName = "visSort_WndClass"; // имя класса окна, нужно системе
 		windowClass.lpfnWndProc = windowProcedure; // указывается функция обработки ввода
 		windowClass.style = CS_DBLCLKS; // это надо
 
@@ -99,7 +70,7 @@ namespace
 		int screenWidth = GetSystemMetrics ( SM_CXFULLSCREEN ); // фиксируем размеры монитора по х
 		int screenHeight = GetSystemMetrics( SM_CYFULLSCREEN ); // по у
 
-		windowHandle = CreateWindowEx( 0, "WoTS_WndClass", "World of Tinyships [CLOSED ALPHA]", WS_CAPTION | WS_SYSMENU,
+		windowHandle = CreateWindowEx( 0, "visSort_WndClass", "Sorting Algorythm Visualization 0.1", WS_CAPTION | WS_SYSMENU,
 								screenWidth / 2 - WINDOW_WIDTH / 2, screenHeight / 2 - WINDOW_HEIGHT / 2, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 								HWND_DESKTOP, nullptr, GetModuleHandle( nullptr ), nullptr );
 
