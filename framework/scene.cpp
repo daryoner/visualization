@@ -98,7 +98,7 @@ namespace scene
 
 namespace
 {
-	class ShipMesh : public scene::Mesh
+	class SquareMesh : public scene::Mesh
 	{
 	public:
 		void draw() override;
@@ -106,43 +106,29 @@ namespace
 
 
 	//-------------------------------------------------------
-	void ShipMesh::draw()
+	void SquareMesh::draw()
 	{
 		Mesh::draw();
 
-		glRotatef( -90.f, 0.f, 0.f, 1.f );
-		glScalef( 0.8f, 0.8f, 0.8f );
+		glBegin( GL_QUADS );
+			glColor3f( 120/255.f, 120/255.f, 120/255.f ); // заливка
 
-		glBegin( GL_TRIANGLES );
-		glColor3f( 0.1f, 0.3f, 0.6f );
-
-		glVertex2f( -0.1f, -0.4f );
-		glVertex2f( 0.1f, -0.4f );
-		glVertex2f( 0.1f, 0.4f );
-
-		glVertex2f( -0.1f, 0.4f );
-		glVertex2f( 0.1f, 0.4f );
-		glVertex2f( -0.1f, -0.4f );
-
-		glVertex2f( -0.1f, -0.4f );
-		glVertex2f( -0.1f, 0.4f );
-		glVertex2f( -0.15f, -0.1f );
-
-		glVertex2f( 0.1f, -0.4f );
-		glVertex2f( 0.1f, 0.4f );
-		glVertex2f( 0.15f, -0.1f );
+			glVertex2f( -0.8f, -0.8f );
+			glVertex2f( -0.8f, 0.8f );
+			glVertex2f( 0.8f, 0.8f );
+			glVertex2f(0.8f, -0.8f);
 
 		glEnd();
 
 		glLineWidth( 2.f );
 		glBegin( GL_LINE_LOOP );
-		glColor3f( 0.4f, 0.8f, 1.f );
-		glVertex2f( -0.1f, -0.4f );
-		glVertex2f( 0.1f, -0.4f );
-		glVertex2f( 0.15f, -0.1f );
-		glVertex2f( 0.1f, 0.4f );
-		glVertex2f( -0.1f, 0.4f );
-		glVertex2f( -0.15f, -0.1f );
+		glColor3f(202 / 255.f, 202 / 255.f, 202 / 255.f); // обводка
+
+		glVertex2f(-0.8f, -0.8f);
+		glVertex2f(-0.8f, 0.8f);
+		glVertex2f(0.8f, 0.8f);
+		glVertex2f(0.8f, -0.8f);
+
 		glEnd();
 	}
 }
@@ -151,9 +137,9 @@ namespace
 namespace scene
 {
 	//-------------------------------------------------------
-	Mesh *createShipMesh()
+	Mesh *createSquareMesh()
 	{
-		return createMesh< ShipMesh >();
+		return createMesh< SquareMesh >();
 	}
 }
 
@@ -192,7 +178,7 @@ namespace scene
 		glScalef( 2.f / VIEW_WIDTH, 2.f / VIEW_HEIGHT, 0.f );
 
 		glDisable( GL_CULL_FACE );
-		glClearColor( 0.1f, 0.2f, 0.4f, 0.f );
+		glClearColor( 97/255.f, 86/255.f, 71/255.f, 0.f );
 		glClear( GL_COLOR_BUFFER_BIT );
 		glMatrixMode( GL_MODELVIEW );
 
