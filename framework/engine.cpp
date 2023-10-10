@@ -31,7 +31,7 @@ namespace
 
 			case WM_LBUTTONUP:
 			case WM_RBUTTONUP:
-				game::mouseClicked( ( float )( GET_X_LPARAM( lParam ) ) / WINDOW_WIDTH,
+				app::mouseClicked( ( float )( GET_X_LPARAM( lParam ) ) / WINDOW_WIDTH,
 									1.f - ( float )( GET_Y_LPARAM( lParam ) ) / WINDOW_HEIGHT,
 									message == WM_LBUTTONUP );
 				break;
@@ -194,7 +194,7 @@ namespace
 			}
 		}
 
-		game::update( dt );
+		app::update( dt );
 		scene::update( dt );
 	}
 }
@@ -211,13 +211,13 @@ namespace engine // движок
 		initWindow();	// открываем окно
 		initOGL();		// включаем OpenGL
 		initClock();	// вводим время, необходимо для анимации
-		game::init();	// запуск игры
+		app::init();	// запуск игры
 		while ( processWindowMessages() )	// пока существует окно
 		{
 			update();   // обновление данных
 			draw();     // отрисовка обновленных данных
 		}
-		game::deinit();	// деактивируем игру
+		app::deinit();	// деактивируем игру
 		deinitOGL();	// деактивируем графику
 		deinitWindow();	// деактивируем окно
 	}

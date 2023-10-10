@@ -74,8 +74,6 @@ private:
 	scene::Mesh *mesh;
 	Vector2 position;
 	float angle;
-
-	bool input[ game::KEY_COUNT ];
 };
 
 
@@ -91,8 +89,7 @@ void Ship::init()
 	mesh = scene::createShipMesh();
 	position = Vector2( 0.f, 0.f );
 	angle = 0.f;
-	for ( bool &key : input )
-		key = false;
+	
 }
 
 
@@ -115,15 +112,14 @@ void Ship::update( float dt )
 
 void Ship::mouseClicked( Vector2 worldPosition, bool isLeftButton )
 {
-	// TODO: placeholder, remove it and implement aircarfts logic
+	
 	if ( isLeftButton )
 	{
-		scene::placeGoalMarker( worldPosition.x, worldPosition.y );
+		
 	}
 	else
 	{
-		scene::Mesh *mesh = scene::createAircraftMesh();
-		scene::placeMesh( mesh, worldPosition.x, worldPosition.y, 0.f );
+		
 	}
 }
 
