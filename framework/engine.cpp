@@ -4,7 +4,7 @@
 #include <windowsx.h>
 #include <GL/gl.h>
 
-#include "game.hpp"
+#include "app.hpp"
 #include "scene.hpp"
 
 

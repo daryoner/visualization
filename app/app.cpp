@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "../framework/scene.hpp"
-#include "../framework/game.hpp"
+#include "../framework/app.hpp"
 
 
 //-------------------------------------------------------
