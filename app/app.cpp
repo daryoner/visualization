@@ -189,6 +189,87 @@ void Square::AnimateToTarget(float dt)
 }
 
 
+enum class QsortStatus
+{
+	NewSortBorders,
+	SetPivot,//pivot is set, move array down
+	SwapFound,
+	SetBorders
+
+
+};
+
+class SortBorders
+{
+public:
+	int L, R;
+
+	SortBorders();
+	SortBorders(int, int);
+};
+
+SortBorders::SortBorders()
+{
+
+}
+
+SortBorders::SortBorders(int left, int right)
+{
+	L = left;
+	R = right;
+}
+
+
+class SquareSorter
+{
+public:
+	SquareSorter();
+	~SquareSorter();
+
+	void NextStep(std::vector<Square*> &v);
+
+private:
+	QsortStatus qSortStatus = QsortStatus::NewSortBorders;
+	int i, j, mid;
+	std::vector<SortBorders> sb;
+	Square* pivot;
+};
+
+void SquareSorter::NextStep(std::vector<Square*> &v)
+{
+	switch (qSortStatus)
+	{
+	case QsortStatus::NewSortBorders:
+		//set sort borders, set pivot
+		break;
+	case QsortStatus::SetPivot:
+		//pivot is set, search for elements, show elements
+		break;
+	case QsortStatus::SwapFound:
+		//swap highlighted elements, move back
+		break;
+	case QsortStatus::SetBorders:
+		//set new borders, separate vectors, 
+		break;
+
+	}
+}
+
+SquareSorter::SquareSorter()
+{
+	sb.push_back(SortBorders());
+	sb[0].L = 0;
+	sb[0].R = params::circleAmount - 1;
+	i = sb[0].L;
+	j = sb[0].R;
+	mid = sb[0].L + (sb[0].R - sb[0].L) / 2;
+}
+
+SquareSorter::~SquareSorter()
+{
+}
+
+
 //-------------------------------------------------------
 //	game public interface
 //-------------------------------------------------------
@@ -199,7 +280,7 @@ namespace app
 	std::vector<Square*> squareVector;
 	static std::vector<bool> colorPickerVector;
 	bool clicked = false;
-	
+	SquareSorter ss;
 
 
 
@@ -222,7 +303,7 @@ namespace app
 			colorPickerVector[newValue] = true;
 			squareVector[i]->value = newValue;
 			squareVector[i]->currentIndex = i;
-			std::cout << squareVector[i]->value << " " << squareVector[i]->currentIndex << std::endl;
+			//std::cout << squareVector[i]->value << " " << squareVector[i]->currentIndex << std::endl;
 
 			squareVector[i]->init(i);
 		}
@@ -263,30 +344,26 @@ namespace app
 		Vector2 worldPosition( x, y );
 		scene::screenToWorld( &worldPosition.x, &worldPosition.y );
 		
+
+		ss.NextStep(squareVector);
+
 		if (!clicked)
 		{
 			std::sort(squareVector.begin(), squareVector.end(), MyCompare);
 			clicked = !clicked;
 		}
-		else
-		{
-			std::sort(squareVector.begin(), squareVector.end(), NotMyCompare);
-			clicked = !clicked;
-		}
+
 			
 
 		for (int i = 0; i < params::circleAmount; i++)
 		{
 			squareVector[i]->currentIndex = i;
-			squareVector[i]->setTarget(Vector2(-8. + (16. / (float)(params::circleAmount - 1)) * squareVector[i]->currentIndex, 3.));
 		}
 
-		/*for (int i = 0; i < params::circleAmount; i++)
-		{
-			squareVector[i]->mouseClicked(worldPosition, isLeftButton);
-		}*/
 		
 	}
+
+	
 	
 }
 
