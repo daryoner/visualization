@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <cmath>
 
 #include "scene.hpp"
 
@@ -110,26 +111,55 @@ namespace
 	{
 		Mesh::draw();
 
-		glBegin( GL_QUADS );
-			glColor4f( 120/255.f, 120/255.f, 120/255.f, 1.f ); // заливка
+		int triangleAmount = 32;
+		int lineAmount = 100;
+		GLfloat radius = 0.8f;
+		GLfloat twicePi = 2.f * std::atan(1)*4.f;
+
+		glBegin(GL_TRIANGLE_FAN);
+			glColor4f(162 / 255.f, 140 / 255.f, 128 / 255.f, 1.f);
+			glVertex2f(0.f, 0.f);
+			for (int i = 0; i <= triangleAmount; i++)
+			{
+				glVertex2f(
+					radius * cos(i * twicePi / triangleAmount),
+					radius * sin(i * twicePi / triangleAmount)
+				);
+			}
+		glEnd();
+
+		glLineWidth(2.f);
+		glBegin(GL_LINE_LOOP);
+			glColor4f(234 / 255.f, 225 / 255.f, 219 / 255.f, 1.f);
+			for (int i = 0; i <= lineAmount; i++)
+			{
+				glVertex2f(
+					radius * cos(i * twicePi / lineAmount),
+					radius * sin(i * twicePi / lineAmount)
+				);
+			}
+		glEnd();
+
+		/*glBegin(GL_QUADS);
+			glColor4f( 162/255.f, 140/255.f, 128/255.f, 1.f ); // заливка
 
 			glVertex2f( -0.8f, -0.8f );
 			glVertex2f( -0.8f, 0.8f );
 			glVertex2f( 0.8f, 0.8f );
-			glVertex2f(0.8f, -0.8f);
+			glVertex2f( 0.8f, -0.8f );
 
 		glEnd();
 
 		glLineWidth( 2.f );
 		glBegin( GL_LINE_LOOP );
-			glColor4f(202 / 255.f, 202 / 255.f, 202 / 255.f, 1.f); // обводка
+			glColor4f( 234/255.f, 225/255.f, 219/255.f, 1.f); // обводка
 
-			glVertex2f(-0.8f, -0.8f);
-			glVertex2f(-0.8f, 0.8f);
-			glVertex2f(0.8f, 0.8f);
-			glVertex2f(0.8f, -0.8f);
+			glVertex2f( -0.8f, -0.8f );
+			glVertex2f( -0.8f, 0.8f );
+			glVertex2f( 0.8f, 0.8f );
+			glVertex2f( 0.8f, -0.8f );
 
-		glEnd();
+		glEnd();*/
 	}
 }
 
@@ -178,7 +208,7 @@ namespace scene
 		glScalef( 2.f / VIEW_WIDTH, 2.f / VIEW_HEIGHT, 0.f );
 
 		glDisable( GL_CULL_FACE );
-		glClearColor( 97/255.f, 86/255.f, 71/255.f, 0.f );
+		glClearColor( 183/255.f, 167/255.f, 160/255.f, 0.f );
 		glClear( GL_COLOR_BUFFER_BIT );
 		glMatrixMode( GL_MODELVIEW );
 
