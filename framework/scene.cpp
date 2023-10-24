@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <random>
 #include <cmath>
+#include <iostream>
 
 #include "scene.hpp"
 
@@ -29,6 +30,10 @@ namespace scene
 		float positionX = 0.f;
 		float positionY = 0.f;
 		float angle = 0.f;
+		
+		float rvalue;
+		float gvalue;
+		float bvalue;
 
 		virtual ~Mesh();
 		virtual void draw();
@@ -65,10 +70,15 @@ namespace scene
 
 	//-------------------------------------------------------
 	template< class MeshClass >
-	Mesh *createMesh()
+	Mesh *createMesh(float rv, float gv, float bv)
 	{
+		
 		Mesh *mesh = new MeshClass;
+		mesh->rvalue = rv;
+		mesh->gvalue = gv;
+		mesh->bvalue = bv;
 		Mesh::meshes.push_back( mesh );
+		//std::cout << Mesh::meshes.size() << std::endl;
 		return mesh;
 	}
 
@@ -102,6 +112,7 @@ namespace
 	class SquareMesh : public scene::Mesh
 	{
 	public:
+		
 		void draw() override;
 	};
 
@@ -113,11 +124,12 @@ namespace
 
 		int triangleAmount = 32;
 		int lineAmount = 100;
-		GLfloat radius = 0.8f;
+		GLfloat radius = 0.7f;
 		GLfloat twicePi = 2.f * std::atan(1)*4.f;
 
 		glBegin(GL_TRIANGLE_FAN);
-			glColor4f(162 / 255.f, 140 / 255.f, 128 / 255.f, 1.f);
+			glColor4f(rvalue, gvalue, bvalue, 0.64f);
+			
 			glVertex2f(0.f, 0.f);
 			for (int i = 0; i <= triangleAmount; i++)
 			{
@@ -139,27 +151,6 @@ namespace
 				);
 			}
 		glEnd();
-
-		/*glBegin(GL_QUADS);
-			glColor4f( 162/255.f, 140/255.f, 128/255.f, 1.f ); // заливка
-
-			glVertex2f( -0.8f, -0.8f );
-			glVertex2f( -0.8f, 0.8f );
-			glVertex2f( 0.8f, 0.8f );
-			glVertex2f( 0.8f, -0.8f );
-
-		glEnd();
-
-		glLineWidth( 2.f );
-		glBegin( GL_LINE_LOOP );
-			glColor4f( 234/255.f, 225/255.f, 219/255.f, 1.f); // обводка
-
-			glVertex2f( -0.8f, -0.8f );
-			glVertex2f( -0.8f, 0.8f );
-			glVertex2f( 0.8f, 0.8f );
-			glVertex2f( 0.8f, -0.8f );
-
-		glEnd();*/
 	}
 }
 
@@ -167,9 +158,9 @@ namespace
 namespace scene
 {
 	//-------------------------------------------------------
-	Mesh *createSquareMesh()
+	Mesh *createSquareMesh(float rv, float gv, float bv)
 	{
-		return createMesh< SquareMesh >();
+		return createMesh< SquareMesh >(rv, gv, bv);
 	}
 }
 

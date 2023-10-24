@@ -8,7 +8,7 @@ namespace scene
 {
 	class Mesh;
 
-	Mesh * createSquareMesh();
+	Mesh * createSquareMesh(float rv, float gv, float bv);
 	void destroyMesh( Mesh *mesh );
 	void placeMesh( Mesh *mesh, float x, float y, float angle );
 

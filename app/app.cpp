@@ -2,6 +2,8 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 #include "../framework/scene.hpp"
 #include "../framework/app.hpp"
@@ -79,6 +81,11 @@ namespace aniMath
 	}
 }
 
+namespace params
+{
+	int circleAmount = 10;
+}
+
 //-------------------------------------------------------
 //	Simple square logic
 //-------------------------------------------------------
@@ -88,12 +95,17 @@ class Square
 public:
 	Square();
 
-	void init();
+	void init(int factor);
 	void deinit();
 	void update( float dt );
 	void mouseClicked( Vector2 worldPosition, bool isLeftButton );
 	void setTarget(Vector2 newTarget);
 	void AnimateToTarget(float dt);
+
+
+	int value;
+	int currentIndex;
+
 
 private:
 	scene::Mesh *mesh;
@@ -101,6 +113,7 @@ private:
 	float angle;
 	Vector2 target;
 	float animationSpeed;
+	
 };
 
 
@@ -110,15 +123,22 @@ Square::Square() :
 }
 
 
-void Square::init()
+void Square::init(int factor)
 {
-	std::srand(std::time(0));
+	std::srand(factor * std::time(0));
 	assert( !mesh );
-	mesh = scene::createSquareMesh();
-	position = Vector2( (-250 + std::rand() % 500) / 100.f, (-250 + std::rand() % 500) / 100.f);
+
+	
+	//std::cout << 255. - (218. * (factor / 9.)) << std::endl;
+
+	mesh = scene::createSquareMesh((255.-(11.*(value/ (float)(params::circleAmount - 1))))/255., (255. - (218. * (value / (float)(params::circleAmount - 1))))/255.,(255. - (149. * (value / (float)(params::circleAmount - 1))))/255.);
+
+	//position = Vector2()
+	position = Vector2(-8. + (16./ (float)(params::circleAmount - 1)) * factor , 3.);
+	
 	target = position;
 	angle = 0.f;
-	animationSpeed = (std::rand() % 100) / 25.f;
+	animationSpeed = 2.f;
 	
 }
 
@@ -135,14 +155,8 @@ void Square::update( float dt )
 	
 	if (position != target)
 	{
-		//std::cout << target.x << " " << target.y << " " << position.x << " " << position.y << std::endl;
 		AnimateToTarget(dt);
 	}
-	//float linearSpeed = 0.f;
-	//float angularSpeed = 0.f;
-
-	//angle = angle + angularSpeed * dt;
-	//position = position + linearSpeed * dt * Vector2( std::cos( angle ), std::sin( angle ) );
 	scene::placeMesh( mesh, position.x, position.y, angle );
 }
 
@@ -151,7 +165,7 @@ void Square::mouseClicked( Vector2 worldPosition, bool isLeftButton )
 	
 	if ( isLeftButton )
 	{
-		setTarget(worldPosition);
+		//setTarget(worldPosition);
 		
 	}
 	else
@@ -162,6 +176,9 @@ void Square::mouseClicked( Vector2 worldPosition, bool isLeftButton )
 
 void Square::setTarget(Vector2 newTarget)
 {
+	
+		
+
 	target = newTarget;
 }
 
@@ -178,34 +195,98 @@ void Square::AnimateToTarget(float dt)
 
 namespace app
 {
-	Square square;
+	//Square square;
+	std::vector<Square*> squareVector;
+	static std::vector<bool> colorPickerVector;
+	bool clicked = false;
+	
 
 
 
 	void init()
 	{
-		square.init();
+		for (int i = 0; i < params::circleAmount; i++)
+			colorPickerVector.push_back(false);
+		
+		//square.init();
+		for (int i = 0; i < params::circleAmount; i++)
+		{
+
+			int newValue;
+			squareVector.push_back(new Square());
+			do
+			{
+				newValue = std::rand() % params::circleAmount;
+
+			} while (colorPickerVector[newValue]);
+			colorPickerVector[newValue] = true;
+			squareVector[i]->value = newValue;
+			squareVector[i]->currentIndex = i;
+			std::cout << squareVector[i]->value << " " << squareVector[i]->currentIndex << std::endl;
+
+			squareVector[i]->init(i);
+		}
 	}
 
 
 	void deinit()
 	{
-		square.deinit();
+		for (int i = 0; i < params::circleAmount; i++)
+		{
+			squareVector[i]->deinit();
+		}
 	}
 
 
 	void update( float dt )
 	{
-		square.update( dt );
+		for (int i = 0; i < params::circleAmount; i++)
+		{
+			
+			squareVector[i]->setTarget(Vector2(-8. + (16. / (float)(params::circleAmount - 1)) * squareVector[i]->currentIndex, 3.));
+			squareVector[i]->update(dt);
+		}
+	}
+
+	bool MyCompare(Square* left, Square* right)
+	{
+		return left->value < right->value;
+	}
+
+	bool NotMyCompare(Square* left, Square* right)
+	{
+		return left->value > right->value;
 	}
 
 	void mouseClicked( float x, float y, bool isLeftButton )
 	{
 		Vector2 worldPosition( x, y );
 		scene::screenToWorld( &worldPosition.x, &worldPosition.y );
-		square.mouseClicked( worldPosition, isLeftButton );
-	}
+		
+		if (!clicked)
+		{
+			std::sort(squareVector.begin(), squareVector.end(), MyCompare);
+			clicked = !clicked;
+		}
+		else
+		{
+			std::sort(squareVector.begin(), squareVector.end(), NotMyCompare);
+			clicked = !clicked;
+		}
+			
 
+		for (int i = 0; i < params::circleAmount; i++)
+		{
+			squareVector[i]->currentIndex = i;
+			squareVector[i]->setTarget(Vector2(-8. + (16. / (float)(params::circleAmount - 1)) * squareVector[i]->currentIndex, 3.));
+		}
+
+		/*for (int i = 0; i < params::circleAmount; i++)
+		{
+			squareVector[i]->mouseClicked(worldPosition, isLeftButton);
+		}*/
+		
+	}
 	
 }
 
