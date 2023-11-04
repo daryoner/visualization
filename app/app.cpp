@@ -192,9 +192,11 @@ void Square::AnimateToTarget(float dt)
 enum class QsortStatus
 {
 	NewSortBorders,
-	SetPivot,//pivot is set, move array down
+	SetPivot,
+	FindPair,
 	SwapFound,
-	SetBorders
+	SetBorders,
+	Finish
 
 
 };
@@ -233,36 +235,117 @@ private:
 	int i, j, mid;
 	std::vector<SortBorders> sb;
 	Square* pivot;
+
+	void PrintStatus();
 };
+
+void SquareSorter::PrintStatus()
+{
+	std::cout << "status: ";
+	switch (qSortStatus)
+	{
+	case QsortStatus::NewSortBorders:// 0
+		std::cout << "NewSortBorders | ";
+		break;
+	case QsortStatus::SetPivot: // 1
+		std::cout << "SetPivot | ";
+		break;
+	case QsortStatus::FindPair: // 2
+		std::cout << "FindPair | ";
+		break;
+	case QsortStatus::SwapFound: // 3
+		std::cout << "SwapFound | ";
+		break;
+	case QsortStatus::SetBorders: // 4
+		std::cout << "SetBorders | ";
+		break;
+	case QsortStatus::Finish:
+		std::cout << "Finish | ";
+		break;
+
+
+
+
+	}
+}
 
 void SquareSorter::NextStep(std::vector<Square*> &v)
 {
+	Square* temp = nullptr;
+	PrintStatus();
+	std::cout << "subVectors to sort:" << sb.size() << std::endl;
 	switch (qSortStatus)
 	{
-	case QsortStatus::NewSortBorders:
-		//set sort borders, set pivot
+	case QsortStatus::NewSortBorders:// 0
+		qSortStatus = QsortStatus::SetPivot;
 		break;
-	case QsortStatus::SetPivot:
-		//pivot is set, search for elements, show elements
+	case QsortStatus::SetPivot: // 1
+		i = sb[0].L;
+		j = sb[0].R;
+		mid = sb[0].L + (sb[0].R - sb[0].L) / 2;
+		pivot = v[mid];
+		std::cout << "\tpivot index:" << mid << std::endl;
+		qSortStatus = QsortStatus::FindPair;
 		break;
-	case QsortStatus::SwapFound:
-		//swap highlighted elements, move back
+	case QsortStatus::FindPair: // 2
+		//std::cout << sb[0].L;
+		if ((i < sb[0].R) || (j > sb[0].L))
+		{
+			while (v[i]->value < pivot->value)
+			{
+				i++;
+			}
+			while (v[j]->value > pivot->value)
+			{
+				j--;
+			}
+			std::cout << "\tFirstToSwap:" << i << "\tSecondToSwap:" << j << std::endl;;
+		}
+		if (i <= j)
+			qSortStatus = QsortStatus::SwapFound;
+		else
+			qSortStatus = QsortStatus::SetBorders;
 		break;
-	case QsortStatus::SetBorders:
-		//set new borders, separate vectors, 
+	case QsortStatus::SwapFound: // 3
+		temp = v[i];
+		v[i] = v[j];
+		v[j] = temp;
+		i++;
+		j--;
+		qSortStatus = QsortStatus::FindPair;
 		break;
+	case QsortStatus::SetBorders: // 4
+		
+		//std::cout << '\t' << i << " " << j << " " << sb[0].R << " " << sb[0].L << std::endl;
+		if (i < sb[0].R)
+			sb.push_back(SortBorders(i, sb[0].R));
+		if (j > sb[0].L)
+			sb.push_back(SortBorders(sb[0].L, j));
 
+		sb.erase(sb.begin());
+		
+		if (sb.size() > 0)
+			qSortStatus = QsortStatus::SetPivot;
+		else
+			qSortStatus = QsortStatus::Finish;
+		if (sb.size() > 0)
+			std::cout << "\tnextBorders:\t" << sb[0].L << '\t' << sb[0].R << std::endl;
+		break;
+	case QsortStatus::Finish:
+		std::cout << "SORTED!!!" << std::endl;
+		break;
 	}
 }
 
 SquareSorter::SquareSorter()
 {
-	sb.push_back(SortBorders());
-	sb[0].L = 0;
-	sb[0].R = params::circleAmount - 1;
+	sb.push_back(SortBorders(0, params::circleAmount - 1));
+	//sb[0].L = 0;
+	//sb[0].R = params::circleAmount - 1;
 	i = sb[0].L;
 	j = sb[0].R;
-	mid = sb[0].L + (sb[0].R - sb[0].L) / 2;
+	mid = i + (j - i) / 2;
+	pivot = nullptr;
 }
 
 SquareSorter::~SquareSorter()
@@ -349,7 +432,7 @@ namespace app
 
 		if (!clicked)
 		{
-			std::sort(squareVector.begin(), squareVector.end(), MyCompare);
+			//std::sort(squareVector.begin(), squareVector.end(), MyCompare);
 			clicked = !clicked;
 		}
 
