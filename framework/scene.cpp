@@ -142,7 +142,7 @@ namespace
 
 		glLineWidth(2.f);
 		glBegin(GL_LINE_LOOP);
-			glColor4f(234 / 255.f, 225 / 255.f, 219 / 255.f, 1.f);
+			glColor4f(234 / 255.f, 225 / 255.f, 219 / 255.f, 0.32f);
 			for (int i = 0; i <= lineAmount; i++)
 			{
 				glVertex2f(
