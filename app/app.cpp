@@ -83,7 +83,7 @@ namespace aniMath
 
 namespace params
 {
-	int circleAmount = 100;
+	int circleAmount = 10;
 	int frameDelay = 1;
 }
 
@@ -474,7 +474,7 @@ namespace app
 		if (delay > dt * params::frameDelay)
 		{
 			delay = 0;
-			mouseClicked(0.f, 0.f, true);
+			//mouseClicked(0.f, 0.f, true);//uncomment for autosort
 		}
 		else
 		{
