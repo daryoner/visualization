@@ -128,7 +128,7 @@ namespace
 		GLfloat twicePi = 2.f * std::atan(1)*4.f;
 
 		glBegin(GL_TRIANGLE_FAN);
-			glColor4f(rvalue, gvalue, bvalue, 0.64f);
+			glColor4f(rvalue, gvalue, bvalue, 1.f);
 			
 			glVertex2f(0.f, 0.f);
 			for (int i = 0; i <= triangleAmount; i++)
@@ -142,7 +142,7 @@ namespace
 
 		glLineWidth(2.f);
 		glBegin(GL_LINE_LOOP);
-			glColor4f(234 / 255.f, 225 / 255.f, 219 / 255.f, 0.32f);
+			glColor4f(234 / 255.f, 225 / 255.f, 219 / 255.f, 1.f);
 			for (int i = 0; i <= lineAmount; i++)
 			{
 				glVertex2f(

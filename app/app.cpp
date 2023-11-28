@@ -83,7 +83,7 @@ namespace aniMath
 
 namespace params
 {
-	int circleAmount = 100;
+	int circleAmount = 10;
 	int frameDelay = 1;
 }
 
@@ -141,7 +141,7 @@ void Square::init(int factor)
 	
 	target = position;
 	angle = 0.f;
-	animationSpeed = 4.f;
+	animationSpeed = 2.f;
 	
 }
 
@@ -209,6 +209,7 @@ enum class QsortStatus
 	FindPair,
 	SwapFound,
 	SetBorders,
+	ReleaseBorders,
 	Finish
 
 
@@ -254,31 +255,30 @@ private:
 
 void SquareSorter::PrintStatus()
 {
-	//std::cout << "status: ";
+	std::cout << "status: ";
 	switch (qSortStatus)
 	{
 	case QsortStatus::NewSortBorders:// 0
-		//std::cout << "NewSortBorders | ";
+		std::cout << "NewSortBorders | ";
 		break;
 	case QsortStatus::SetPivot: // 1
-		//std::cout << "SetPivot | ";
+		std::cout << "SetPivot | ";
 		break;
 	case QsortStatus::FindPair: // 2
-		//std::cout << "FindPair | ";
+		std::cout << "FindPair | ";
 		break;
 	case QsortStatus::SwapFound: // 3
-		//std::cout << "SwapFound | ";
+		std::cout << "SwapFound | ";
 		break;
 	case QsortStatus::SetBorders: // 4
-		//std::cout << "SetBorders | ";
+		std::cout << "SetBorders | ";
+		break;
+	case QsortStatus::ReleaseBorders:
+		std::cout << "ReleaseBorders | ";
 		break;
 	case QsortStatus::Finish:
-		//std::cout << "Finish | ";
+		std::cout << "Finish | ";
 		break;
-
-
-
-
 	}
 }
 
@@ -286,7 +286,7 @@ void SquareSorter::NextStep(std::vector<Square*> &v)
 {
 	Square* temp = nullptr;
 	PrintStatus();
-	//std::cout << "subVectors to sort:" << sb.size() << std::endl;
+	std::cout << "subVectors to sort:" << sb.size() << std::endl;
 	switch (qSortStatus)
 	{
 	case QsortStatus::NewSortBorders:// 0
@@ -322,15 +322,24 @@ void SquareSorter::NextStep(std::vector<Square*> &v)
 			//std::cout << "\tFirstToSwap:" << i << "\tSecondToSwap:" << j << std::endl;;
 			
 		}
+
+	
+		std::cout << i << ' ' << j << '\n';
 		if (i <= j)
 		{
 			qSortStatus = QsortStatus::SwapFound;
 			v[i]->setTarget(Vector2(v[i]->GetPosition().x, -1.f));
 			v[j]->setTarget(Vector2(v[j]->GetPosition().x, -1.f));
+			if (i == j)
+				this->NextStep(v);
 		}
 			
 		else
+		{
 			qSortStatus = QsortStatus::SetBorders;
+			this->NextStep(v);
+		}
+			
 		break;
 	case QsortStatus::SwapFound: // 3
 		temp = v[i];
@@ -346,7 +355,11 @@ void SquareSorter::NextStep(std::vector<Square*> &v)
 			v[j]->setTarget(Vector2(v[j]->GetPosition().x, 1.f));
 		i++;
 		j--;
-		qSortStatus = QsortStatus::FindPair;
+		
+		if (i >= j)
+			qSortStatus = QsortStatus::SetBorders;
+		else
+			qSortStatus = QsortStatus::FindPair;
 		break;
 	case QsortStatus::SetBorders: // 4
 		
@@ -362,35 +375,30 @@ void SquareSorter::NextStep(std::vector<Square*> &v)
 		if (j > sb[0].L)
 			sb.push_back(SortBorders(sb[0].L, j));
 
-		
-
-		
-		
 		if (sb.size() > 1)
 		{
 			qSortStatus = QsortStatus::SetPivot;
-			for (int lb = sb[0].L; lb <= sb[0].R; lb++)
-			{
-			
-				v[lb]->setTarget(Vector2(v[lb]->GetPosition().x, 3.0f));
-			}
 		}
-			
 		else
 			qSortStatus = QsortStatus::Finish;
 		sb.erase(sb.begin());
 		if (sb.size() > 0)
-		{
-			//std::cout << "\tnextBorders:\t" << sb[0].L << '\t' << sb[0].R << std::endl;
-			for (int lb = sb[0].L; lb <= sb[0].R; lb++)
-			{
-				//std::cout << '\t' << "looking for error" << '\n';
-				v[lb]->setTarget(Vector2(v[lb]->GetPosition().x, 1.0f));
-			}
-		}
+			qSortStatus = QsortStatus::ReleaseBorders;
+		
 			
 
 		break;
+	case QsortStatus::ReleaseBorders:
+		//std::cout << "\tnextBorders:\t" << sb[0].L << '\t' << sb[0].R << std::endl;
+		for (int lb = sb[0].L; lb <= sb[0].R; lb++)
+		{
+			v[lb]->setTarget(Vector2(v[lb]->GetPosition().x, 1.0f));
+		}
+		qSortStatus = QsortStatus::SetPivot;
+
+
+		break;
+	
 	case QsortStatus::Finish:
 		std::cout << "SORTED!!!" << std::endl;
 		break;
@@ -474,7 +482,7 @@ namespace app
 		if (delay > dt * params::frameDelay)
 		{
 			delay = 0;
-			mouseClicked(0.f, 0.f, true);
+			//mouseClicked(0.f, 0.f, true);
 		}
 		else
 		{
