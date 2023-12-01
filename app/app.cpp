@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 #include "../framework/scene.hpp"
 #include "../framework/app.hpp"
@@ -96,7 +97,7 @@ class Square
 public:
 	Square();
 
-	void init(int factor);
+	void init(int factor, std::string color);
 	void deinit();
 	void update( float dt );
 	void mouseClicked( Vector2 worldPosition, bool isLeftButton );
@@ -126,15 +127,32 @@ Square::Square() :
 }
 
 
-void Square::init(int factor)
+void Square::init(int factor, std::string color)
 {
+	std::map<std::string, int> mapping;
+	mapping["QuickSorter"] = 1;
+	mapping["BubbleSorter"] = 2;
+	float rv, gv, bv;
+	switch (mapping[color])
+	{
+		case 1:
+			rv = 11.;
+			gv = 218.;
+			bv = 149.;
+			break;
+		case 2:
+			rv = 255.-11.;
+			gv = 255.-81.;
+			bv = 255.-244.;
+			break;
+	}
 	std::srand(factor * std::time(0));
 	assert( !mesh );
 
 	
 	//std::cout << 255. - (218. * (factor / 9.)) << std::endl;
 
-	mesh = scene::createSquareMesh((255.-(11.*(value/ (float)(params::circleAmount - 1))))/255., (255. - (218. * (value / (float)(params::circleAmount - 1))))/255.,(255. - (149. * (value / (float)(params::circleAmount - 1))))/255.);
+	mesh = scene::createSquareMesh((255.-(rv *(value/ (float)(params::circleAmount - 1))))/255., (255. - (gv * (value / (float)(params::circleAmount - 1))))/255.,(255. - (bv * (value / (float)(params::circleAmount - 1))))/255.);
 
 	//position = Vector2()
 	position = Vector2(-8. + (16./ (float)(params::circleAmount - 1)) * factor , 3.);
@@ -243,6 +261,7 @@ public:
 	~QuickSorter();
 
 	void NextStep(std::vector<Square*> &v);
+	std::string name;
 
 private:
 	QsortStatus qSortStatus = QsortStatus::NewSortBorders;
@@ -414,6 +433,7 @@ QuickSorter::QuickSorter()
 	j = sb[0].R;
 	mid = i + (j - i) / 2;
 	pivot = nullptr;
+	name = "QuickSorter";
 }
 
 QuickSorter::~QuickSorter()
@@ -433,10 +453,12 @@ enum class BsortStatus
 class BubbleSorter
 {
 public:
-	BubbleSorter() {};
+	BubbleSorter() { name = "BubbleSorter"; };
 	~BubbleSorter() {};
 
 	void NextStep(std::vector<Square*>& v);
+
+	std::string name;
 
 private:
 	BsortStatus bSortStatus = BsortStatus::Start;
@@ -519,13 +541,16 @@ namespace app
 	std::vector<Square*> squareVector;
 	static std::vector<bool> colorPickerVector;
 	bool clicked = false;
-	//QuickSorter ss;
-	BubbleSorter ss;
+	QuickSorter ss;
+	//BubbleSorter ss;
 
+	std::string color = ss.name;
+	
 
 
 	void init()
 	{
+		
 		for (int i = 0; i < params::circleAmount; i++)
 			colorPickerVector.push_back(false);
 		
@@ -545,7 +570,7 @@ namespace app
 			squareVector[i]->currentIndex = i;
 			//std::cout << squareVector[i]->value << " " << squareVector[i]->currentIndex << std::endl;
 
-			squareVector[i]->init(i);
+			squareVector[i]->init(i, color);
 		}
 	}
 
