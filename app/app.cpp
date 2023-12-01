@@ -141,7 +141,7 @@ void Square::init(int factor)
 	
 	target = position;
 	angle = 0.f;
-	animationSpeed = 2.f;
+	animationSpeed = 4.f;
 	
 }
 
@@ -236,11 +236,11 @@ SortBorders::SortBorders(int left, int right)
 }
 
 
-class SquareSorter
+class QuickSorter
 {
 public:
-	SquareSorter();
-	~SquareSorter();
+	QuickSorter();
+	~QuickSorter();
 
 	void NextStep(std::vector<Square*> &v);
 
@@ -253,7 +253,7 @@ private:
 	void PrintStatus();
 };
 
-void SquareSorter::PrintStatus()
+void QuickSorter::PrintStatus()
 {
 	std::cout << "status: ";
 	switch (qSortStatus)
@@ -282,11 +282,11 @@ void SquareSorter::PrintStatus()
 	}
 }
 
-void SquareSorter::NextStep(std::vector<Square*> &v)
+void QuickSorter::NextStep(std::vector<Square*> &v)
 {
 	Square* temp = nullptr;
-	PrintStatus();
-	std::cout << "subVectors to sort:" << sb.size() << std::endl;
+	//PrintStatus();
+	//std::cout << "subVectors to sort:" << sb.size() << std::endl;
 	switch (qSortStatus)
 	{
 	case QsortStatus::NewSortBorders:// 0
@@ -324,7 +324,7 @@ void SquareSorter::NextStep(std::vector<Square*> &v)
 		}
 
 	
-		std::cout << i << ' ' << j << '\n';
+		//std::cout << i << ' ' << j << '\n';
 		if (i <= j)
 		{
 			qSortStatus = QsortStatus::SwapFound;
@@ -400,12 +400,12 @@ void SquareSorter::NextStep(std::vector<Square*> &v)
 		break;
 	
 	case QsortStatus::Finish:
-		std::cout << "SORTED!!!" << std::endl;
+		std::cout << "QUICK SORTED!!!" << std::endl;
 		break;
 	}
 }
 
-SquareSorter::SquareSorter()
+QuickSorter::QuickSorter()
 {
 	sb.push_back(SortBorders(0, params::circleAmount - 1));
 	//sb[0].L = 0;
@@ -416,9 +416,97 @@ SquareSorter::SquareSorter()
 	pivot = nullptr;
 }
 
-SquareSorter::~SquareSorter()
+QuickSorter::~QuickSorter()
 {
 }
+
+enum class BsortStatus
+{
+	Start,
+	Compare,
+	Swap,
+	Finish
+
+
+};
+
+class BubbleSorter
+{
+public:
+	BubbleSorter() {};
+	~BubbleSorter() {};
+
+	void NextStep(std::vector<Square*>& v);
+
+private:
+	BsortStatus bSortStatus = BsortStatus::Start;
+	int i, j;
+	int externalSize, internalSize;
+	
+
+	void PrintStatus();
+};
+
+void BubbleSorter::NextStep(std::vector<Square*>& v)
+{
+	Square* temp = nullptr;
+	//std::cout << (int)bSortStatus << '\n';
+	switch (bSortStatus)
+	{
+		case BsortStatus::Start:
+			externalSize = v.size();
+			internalSize = v.size() - 1;
+			i = 0;
+			j = 0;
+			bSortStatus = BsortStatus::Compare;
+			this->NextStep(v);
+			break;
+		case BsortStatus::Compare:
+			//move down adjacent
+			v[j]->setTarget(Vector2(v[j]->GetPosition().x, 1.0f));
+			v[j+1]->setTarget(Vector2(v[j+1]->GetPosition().x, 1.0f));
+			bSortStatus = BsortStatus::Swap;
+			break;
+		case BsortStatus::Swap:
+			//swap and increment
+			if (v[j]->value > v[j + 1]->value)
+			{
+				temp = v[j];
+				v[j] = v[j+1];
+				v[j+1] = temp;
+			}
+			v[j]->setTarget(Vector2(v[j + 1]->GetPosition().x, 3.0f));
+			v[j]->setTarget(Vector2(v[j + 1]->GetPosition().x, 3.0f));
+			j++;
+			if (j == internalSize)
+			{
+				j = 0;
+				i++;
+			}
+			if (i == externalSize)
+			{
+				bSortStatus = BsortStatus::Finish;
+				this->NextStep(v);
+			}
+			else
+				bSortStatus = BsortStatus::Compare;
+			for (int a = 0; a < v.size(); a++)
+			{
+				v[a]->setTarget(Vector2(v[a]->GetPosition().x, 3.0f));
+			}
+
+			break;
+		case BsortStatus::Finish:
+			for (int a = 0; a < v.size(); a++)
+			{
+				v[a]->setTarget(Vector2(v[a]->GetPosition().x, 3.0f));
+			}
+			std::cout << "BUBBLE SORTED!!!\n";
+			break;
+	}
+
+}
+
 
 
 //-------------------------------------------------------
@@ -431,7 +519,8 @@ namespace app
 	std::vector<Square*> squareVector;
 	static std::vector<bool> colorPickerVector;
 	bool clicked = false;
-	SquareSorter ss;
+	//QuickSorter ss;
+	BubbleSorter ss;
 
 
 
