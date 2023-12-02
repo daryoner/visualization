@@ -8,7 +8,7 @@
 
 #include "../framework/scene.hpp"
 #include "../framework/app.hpp"
-#include "../app/Sorters.hpp"
+#include "Sorters.hpp"
 
 
 
