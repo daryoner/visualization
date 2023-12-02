@@ -23,11 +23,13 @@
     <ClCompile Include="..\framework\scene.cpp" />
     <ClCompile Include="..\app\app.cpp" />
     <ClCompile Include="..\app\main.cpp" />
+    <ClCompile Include="Sorters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\framework\engine.hpp" />
     <ClInclude Include="..\framework\app.hpp" />
     <ClInclude Include="..\framework\scene.hpp" />
+    <ClInclude Include="Sorters.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

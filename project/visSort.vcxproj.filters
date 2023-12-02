@@ -21,6 +21,9 @@
     <ClCompile Include="..\app\main.cpp">
       <Filter>app</Filter>
     </ClCompile>
+    <ClCompile Include="Sorters.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\framework\engine.hpp">
@@ -31,6 +34,9 @@
     </ClInclude>
     <ClInclude Include="..\framework\scene.hpp">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Sorters.hpp">
+      <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
